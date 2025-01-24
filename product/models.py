@@ -58,4 +58,4 @@ class Variation(models.Model):
         if not self.name:
             return self.product.name
         return self.name
-    
+
