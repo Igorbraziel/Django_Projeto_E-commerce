@@ -26,13 +26,13 @@ class Product(models.Model):
     )
     
     def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify_new(self.name)
+            
         super().save(*args, **kwargs)
         
         if self.image:
             self.image = resize_image(self.image)
-            
-        if not self.slug:
-            self.slug = slugify_new(self.name)
     
     def __str__(self):
         return self.name
