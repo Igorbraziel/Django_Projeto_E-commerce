@@ -17,8 +17,7 @@ class ProductListView(ListView):
     
 class ProductDetailView(DetailView):
     model = Product
-    template_name = 'CHANGE-ME'
-    ordering = '-pk',
+    template_name = 'product/detail.html'
     context_object_name = 'product_obj'
     slug_field = 'slug'
     
