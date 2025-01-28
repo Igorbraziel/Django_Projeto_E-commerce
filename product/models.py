@@ -13,7 +13,7 @@ class Product(models.Model):
     image = models.ImageField(upload_to='products_images/%Y/%m/', blank=True, null=True)
     slug = models.SlugField(
         unique=True, blank=True, null=True,
-        default=None
+        default=None, max_length=255
     )
     marketing_price = models.FloatField()
     marketing_promotional_price = models.FloatField(default=0)

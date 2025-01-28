@@ -4,9 +4,10 @@ from product.models import Product
 
 class ProductListView(ListView):
     model = Product
-    template_name = 'CHANGE-ME'
+    template_name = 'product/list.html'
     ordering = '-pk',
     context_object_name = 'products'
+    paginate_by = 3
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

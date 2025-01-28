@@ -1,11 +1,11 @@
-from django.urls import path, include
+from django.urls import path
 from profile_app import views
 
 app_name = 'profile_app'
 
 urlpatterns = [
-    path('', include(views.CreateView.as_view()), name='create'),
-    path('update/', include(views.UpdateView.as_view()), name='update'),
-    path('login/', include(views.LoginView.as_view()), name='login'),
-    path('logout/', include(views.LogoutView.as_view()), name='logout'),
-]
+    path('', views.CreateView.as_view(), name='create'),
+    path('update/', views.UpdateView.as_view(), name='update'),
+    path('login/', views.LoginView.as_view(), name='login'),
+    path('logout/', views.LogoutView.as_view(), name='logout'),
+] 
