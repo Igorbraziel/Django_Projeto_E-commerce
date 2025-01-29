@@ -34,7 +34,7 @@
                 {% endif %}
             </p>
 
-            <form action="{{ url 'product:addtocart' }}" id="form-add-to-cart">
+            <form action="{% url 'product:addtocart' %}" id="form-add-to-cart">
                 <div class="form-group">
                     <select id="select-variacoes" name="vid" class="form-control form-control-lg">
                         {% for variation in product_obj.variation_set.all %}
