@@ -57,10 +57,10 @@ class AddToCartView(View):
         unit_promotional_price = variation.marketing_promotional_price
         quantity = 1
         slug = variation.product.slug
-        image_name = None
+        image_url = None
         
         if variation.product.image:
-            image_name = variation.product.image.name    
+            image_url = variation.product.image.url   
         
         if not self.request.session.get('cart'):
             self.request.session['cart'] = {}
@@ -89,7 +89,7 @@ class AddToCartView(View):
                 'quantitative_promotional_price': unit_promotional_price,
                 'quantity': quantity,
                 'slug': slug,
-                'image_name': image_name,
+                'image_url': image_url,
             }
             
         self.request.session.save()
@@ -99,11 +99,30 @@ class AddToCartView(View):
         return redirect(http_referer)
 
 class RemoveFromCartView(View):
-    pass
+    def get(self, *args, **kwargs):
+        http_referer = self.request.META.get('HTTP_REFERER', reverse('product:list'))
+        variation_id = self.request.GET.get('vid')
+        cart = self.request.session.get('cart')
+        
+        if not variation_id or not cart or not variation_id in cart:
+            return redirect(http_referer)
+        
+        messages.success(self.request, f'Product {cart[variation_id]["product_name"]} - Removed from cart')
+        del self.request.session['cart'][variation_id]
+        self.request.session.save()
+        return redirect(http_referer)
+        
 
 class CartView(View):
     def get(self, *args, **kwargs):
-        return render(self.request, 'product/cart.html')
+        context = {
+            'cart': self.request.session.get('cart')
+        }
+        return render(
+            self.request,
+            'product/cart.html',
+            context=context
+        )
 
 class FinishView(View):
     pass
