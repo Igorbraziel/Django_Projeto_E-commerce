@@ -107,7 +107,7 @@ class RemoveFromCartView(View):
         if not variation_id or not cart or not variation_id in cart:
             return redirect(http_referer)
         
-        messages.success(self.request, f'Product {cart[variation_id]["product_name"]} - Removed from cart')
+        messages.success(self.request, f'{cart[variation_id]["product_name"]} - Removed from cart')
         del self.request.session['cart'][variation_id]
         self.request.session.save()
         return redirect(http_referer)
