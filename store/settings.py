@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    'crispy_forms',
+    "crispy_bootstrap5", 
+    
     # MY APPS
     'product',
     'order',
@@ -147,3 +150,5 @@ MESSAGE_TAGS = {
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
 
 SESSION_SAVE_EVERY_REQUEST = False
+
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
