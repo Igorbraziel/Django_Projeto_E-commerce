@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import View
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
 from . import forms
 from . import models
@@ -13,31 +14,34 @@ class BaseProfileView(View):
         super().setup(*args, **kwargs)
         
         self.profile = None
+        self.cart = self.request.session.get('cart')
         
         if self.request.user.is_authenticated:
             self.profile = models.UserProfile.objects.filter(user=self.request.user).first() 
             
-            userform = forms.UserForm(
-                data=self.request.POST or None,
-                user=self.request.user,
-                instance=self.request.user,
-            )
+            self.context = {
+                'userform': forms.UserForm(
+                    data=self.request.POST or None,
+                    user=self.request.user,
+                    instance=self.request.user,
+                ),
+                'profileform': forms.ProfileForm(
+                    data=self.request.POST or None,
+                    instance=self.profile,   
+                )
+            }
             
-            profileform = forms.ProfileForm(
-                data=self.request.POST or None,
-                instance=self.profile,   
-            )
         else:
-            userform = forms.UserForm(data=self.request.POST or None),
-            profileform = forms.ProfileForm(data=self.request.POST or None),
-            
-        self.context = {
-            'userform': userform,
-            'profileform': profileform,
-        }
-        
+            self.context = {
+                'userform': forms.UserForm(data=self.request.POST or None),
+                'profileform': forms.ProfileForm(data=self.request.POST or None),
+            }
+                    
         self.userform = self.context['userform']
         self.profileform = self.context['profileform']
+        
+        if self.request.user.is_authenticated:
+            self.template_name = 'profile_app/update.html'
         
         self.render = render(self.request, self.template_name, self.context)
     
@@ -67,6 +71,15 @@ class CreateView(BaseProfileView):
             user.email = email
             user.save()
             
+            if not self.profile:
+                self.profileform.cleaned_data['user'] = user
+                self.profile = models.UserProfile(**self.profileform.cleaned_data)
+                self.profile.save()
+            else:
+                self.profile = self.profileform.save(commit=False)
+                self.profile.user = user
+                self.profile.save()
+            
         else:
             user = self.userform.save(commit=False)
             user.set_password(password)
@@ -75,7 +88,18 @@ class CreateView(BaseProfileView):
             profile = self.profileform.save(commit=False)
             profile.user = user
             profile.save()
+            
+        if password:
+            authenticated = authenticate(
+                self.request, 
+                username=user,
+                password=password,
+            )
+            
+            if authenticated:
+                login(self.request, user=user)
         
+        self.request.session['cart'] = self.cart
         return self.render
 
 class UpdateView(View):
