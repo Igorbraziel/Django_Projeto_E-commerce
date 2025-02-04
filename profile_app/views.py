@@ -1,8 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import View
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+import copy
 
 from . import forms
 from . import models
@@ -100,14 +101,47 @@ class CreateView(BaseProfileView):
                 login(self.request, user=user)
         
         self.request.session['cart'] = self.cart
-        return self.render
+        self.request.session.save()
+        
+        messages.success(self.request, 'Your Register has been created successfully')
+        
+        return redirect('profile_app:create')
+    
 
-class UpdateView(View):
-    pass
+class UpdateView(CreateView):
+    ...
 
 class LoginView(View):
-    pass
+    def post(self, *args, **kwargs):
+        username = self.request.POST.get('username')
+        password = self.request.POST.get('password')
+                    
+        if not username or not password:
+            messages.error(self.request, 'Username and password needs to be filled')
+            return redirect('profile_app:create')
+        
+        user = authenticate(self.request, username=username, password=password)
+        if not user:
+            messages.error(self.request, 'Username or password are invalids')
+            return redirect('profile_app:create')
+        
+        login(self.request, user=user)
+        messages.success(self.request, 'You are logged in successfully')
+        return redirect('product:cart')
+    
+        
+        
+        
 
 class LogoutView(View):
-    pass
+    def get(self, *args, **kwargs):
+        cart = copy.deepcopy(self.request.session.get('cart'))
+        
+        logout(self.request)
+        
+        self.request.session['cart'] = cart
+        self.request.session.save()
+        
+        return redirect('product:list')
+        
 
