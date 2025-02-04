@@ -124,6 +124,15 @@ class CartView(View):
             context=context
         )
 
-class FinishView(View):
-    pass
+class PurchaseSummaryView(View):
+    def get(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            return redirect('profile_app:create')
+        
+        context = {
+            'user': self.request.user,
+            'cart': self.request.session.get('cart'),
+        }
+        
+        return render(self.request, 'product/purchasesummary.html', context)
     
