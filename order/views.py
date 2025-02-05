@@ -7,21 +7,24 @@ from order.models import Order, OrderItem
 from product.models import Variation
 from utils import my_functions
 
-class DispatchLoginRequired(View):
+class DispatchLoginRequiredMixin(View):
     def dispatch(self, request, *args, **kwargs):
         if not self.request.user.is_authenticated:
             return redirect('profile_app:create')
         
         return super().dispatch(request, *args, **kwargs)
     
+    def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user)
 
-class PaymentView(DetailView):
+
+class PaymentView(DispatchLoginRequiredMixin, DetailView):
     model = Order
     template_name = 'order/payment.html'
     context_object_name = 'order'
     
     def get_queryset(self):
-        return super().get_queryset().filter(pk=self.kwargs.get('pk'), user=self.request.user)
+        return super().get_queryset().filter(pk=self.kwargs.get('pk'))
         
         
 
@@ -92,18 +95,19 @@ class CloseOrderView(View):
                     )
     
 
-class OrderDetailView(DetailView):
+class OrderDetailView(DispatchLoginRequiredMixin, DetailView):
     model = Order
-    template_name = 'CHANGE-ME'
+    template_name = 'order/detail.html'
     context_object_name = 'order'
     
     def get_queryset(self):
         return super().get_queryset().filter(pk=self.kwargs.get('pk'))
     
-class OrderListView(ListView):
-    template_name = 'order/list.html'
+class OrderListView(DispatchLoginRequiredMixin, ListView):
     model = Order
+    template_name = 'order/list.html'
     context_object_name = 'orders'
-
+    paginate_by = 10
+    ordering = '-pk',
 
 

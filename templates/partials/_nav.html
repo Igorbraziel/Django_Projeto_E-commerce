@@ -20,7 +20,8 @@
                         Account
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{% url 'profile_app:create' %}">Update</a>
+                        <a class="dropdown-item" href="{% url 'order:list' %}">My Orders</a>
+                        <a class="dropdown-item" href="{% url 'profile_app:create' %}">Update My Data</a>
                         <a class="dropdown-item" href="{% url 'profile_app:logout' %}">Exit</a>
                     </div>
                 </li>
