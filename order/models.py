@@ -7,7 +7,8 @@ class Order(models.Model):
         verbose_name_plural = 'orders'
         
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    total = models.FloatField()
+    total_value = models.FloatField()
+    total_quantity = models.PositiveIntegerField(default=1)
     status = models.CharField(
         default='C', max_length=1,
         choices=(
@@ -37,7 +38,7 @@ class OrderItem(models.Model):
     price = models.FloatField()
     promotional_price = models.FloatField(default=0)
     quantity = models.PositiveIntegerField()
-    image = models.CharField(max_length=2000)
+    image_url = models.CharField(max_length=2000)
     
     def __str__(self):
         return f'Item of {self.order}'

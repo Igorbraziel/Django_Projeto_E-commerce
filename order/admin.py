@@ -8,9 +8,9 @@ class OrderItemInline(admin.TabularInline):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     inlines = [ OrderItemInline ]
-    list_display = 'id', 'total', 'status',
+    list_display = 'id', 'total_value', 'total_quantity', 'status',
     list_display_links = 'id',
-    search_fields = 'id', 'total',
+    search_fields = 'id', 'total_value',
     list_per_page = 10    
     ordering = '-id',
     

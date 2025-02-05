@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, View
 from django.urls import reverse
-from django.http import HttpResponse
 from django.contrib import messages
+
 from product.models import Product, Variation
+from profile_app.models import UserProfile
 
 class ProductListView(ListView):
     model = Product
@@ -128,6 +129,16 @@ class PurchaseSummaryView(View):
     def get(self, *args, **kwargs):
         if not self.request.user.is_authenticated:
             return redirect('profile_app:create')
+        
+        profile_exists = UserProfile.objects.filter(user=self.request.user)
+        
+        if not profile_exists:
+            messages.error(self.request, 'User without Profile')
+            return redirect('profile_app:create')
+        
+        if not self.request.session.get('cart'):
+            messages.error(self.request, 'Your cart is empty')
+            return redirect('product:list')
         
         context = {
             'user': self.request.user,

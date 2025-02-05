@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load omfilters %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col">
+        <h3>Choose your payment method</h3>
+        <p>For Developer: add your favorite payment method</p>
+    </div>
+</div>        
+
+<div class="row">
+    <div class="col">
+        <h3>{{ order }}</h3>
+
+        <div class="row mt-4">
+            <div class="col-lg-2 font-weight-bold">Order Number:</div>
+            <div class="col-lg-4">{{ order.pk }}</div>
+            <div class="col-lg-2 font-weight-bold">Total to pay:</div>
+            <div class="col-lg-4">{{ order.total_value | price_format }}</div>
+
+            <div class="col-lg-2 font-weight-bold">Quantity of items:</div>
+            <div class="col-lg-4">{{ order.total_quantity }}</div>
+            <div class="col-lg-2 font-weight-bold">Status:</div>
+            <div class="col-lg-4">{{ order.get_status_display }}</div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col">
+                <h3>Products</h3>
+            </div>
+        </div>
+
+        <div class="table-responsive mt-3">
+            <table class="table">
+                <tr>
+                    <th class="d-none d-lg-block">Image</th>
+                    <th>Product</th>
+                    <th>Variation</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+
+                {% for item in order.orderitem_set.all %}
+                <tr>
+                    <td class="d-none d-lg-block">
+                        <img class="cart-img" src="{{ item.image_url }}">
+                    </td>
+                    <td>{{ item.product_name }}</td>
+                    <td>{{ item.variation_name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>
+                        {% if item.promotional_price %}
+                            {{ item.promotional_price | price_format }}
+                        {% else %}
+                            {{ item.price | price_format }}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+
+        <div class="row mt-4">
+            <div class="col">
+                <a href="#" class="btn btn-primary btn-block btn-lg">Pay</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock content%}
