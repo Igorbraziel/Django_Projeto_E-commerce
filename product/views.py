@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, View
 from django.urls import reverse
 from django.contrib import messages
+from django.db.models import Q
 
 from product.models import Product, Variation
 from profile_app.models import UserProfile
@@ -146,4 +147,22 @@ class PurchaseSummaryView(View):
         }
         
         return render(self.request, 'product/purchasesummary.html', context)
+    
+    
+class SearchView(ProductListView):
+    def get_queryset(self):
+        search_value = self.request.GET.get('search_value') or self.request.session.get('search_value')
+        
+        if not search_value:
+            return super().get_queryset()
+        
+        self.request.session['search_value'] = search_value
+        
+        self.request.session.save()
+            
+        return super().get_queryset().filter(
+            Q(name__icontains=search_value) |
+            Q(short_description__icontains=search_value) |
+            Q(long_description__icontains=search_value)
+        )
     
