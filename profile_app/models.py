@@ -54,6 +54,17 @@ class UserProfile(models.Model):
     
     def clean(self):
         error_messages = {}
+        
+        cpf_sent = self.cpf
+        cpf_saved = None
+        profile = UserProfile.objects.filter(cpf=cpf_sent).first()
+        
+        if profile:
+            cpf_saved = profile.cpf
+            
+            if cpf_saved is not None and self.pk != profile.pk:
+                error_messages['cpf'] = 'The CPF is already in use'
+        
         if not cpf_validator(self.cpf):
             error_messages['cpf'] = 'Invalid CPF'
         if re.search(r'[^0-9]', self.cep) or len(self.cep) < 8:
