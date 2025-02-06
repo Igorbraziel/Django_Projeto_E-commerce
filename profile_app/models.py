@@ -12,7 +12,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     age = models.PositiveIntegerField()
     birth_date = models.DateField()
-    cpf = models.CharField(max_length=11)
+    cpf = models.CharField(max_length=11, unique=True)
     address = models.CharField(max_length=50)
     number = models.CharField(max_length=5)
     complement = models.CharField(max_length=30)

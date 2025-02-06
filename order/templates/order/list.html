@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load omfilters %}
 
+{% block title %}{{ request.user }}'s Orders | {% endblock title %}
+
 {% block content %}
 
 <div class="row">
