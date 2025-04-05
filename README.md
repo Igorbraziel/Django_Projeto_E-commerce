@@ -1,2 +1,2 @@
 # Django_Projeto_E-commerce
-Projeto E-commerce utilizando o framework Django
+Protótipo de E-commerce desenvolvido com Django. Sistema completo com cadastro de usuários, catálogo de produtos, carrinho de compras e painel administrativo. A parte de pagamento ainda não foi implementada.
